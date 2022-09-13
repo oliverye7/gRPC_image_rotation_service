@@ -4,7 +4,6 @@ import image_pb2_grpc as pb_grpc
 
 from concurrent import futures
 
-
 class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
   def RotateImage(self, request, context):
 	# rotates images by 90
