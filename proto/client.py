@@ -1,13 +1,10 @@
 import argparse
 import cv2
 import io
-#import grpc
-#import image_pb2 as pb
-#import image_pb2_grpc as pg_grpc
-#
+import grpc
+import image_pb2 as pb
+import image_pb2_grpc as pg_grpc
 from PIL import Image, ImageOps
-#with grpc.insecure_channel("localhost:8080") as ch:
-#  stub = pb_grpc.NLImageServiceStub(ch)
 
 def isgray(imgpath):
     img = cv2.imread(imgpath)
@@ -57,20 +54,36 @@ if __name__ == '__main__':
   print(height)
   print(width * height)
   if (isgray):
-    grayVals = []
+    data = []
     for i in range(len(pix_val)):
-        grayVals.append((pix_val[i][0]).to_bytes(1, byteorder='big'))
-    print(len(grayVals))
+        data.append((pix_val[i][0]).to_bytes(1, byteorder='big'))
+    print(len(data))
     #print(grayVals)
+    #TODO
+    #confirm that casting back to int from byte array results in the same int arry
   else:
     print(len(pix_val))
-    pix_val_flat = [x for sets in pix_val for x in sets]
-    del pix_val_flat[4-1::4]
-    print(len(pix_val_flat))
+    data = [x for sets in pix_val for x in sets]
+    print(len(data))
+    del data[4-1::4]
+	# convert to bytes
+	#for i in range(len(pix_val_flat)):
+	#	pix_val_flat[i] = (pix_val_flat[i]).to_bytes(1, byteorder='big')
+    print(len(data))
     #print(pix_val_flat)
-
-
-
+	
+  with grpc.insecure_channel("localhost:8080") as ch:
+	stub = pg_grpc.NLImageServiceStub(ch)
+    NLImg = pb.NLImage(color=isgray, data=data, width=width, height=height)
+    request = pb.NLImageRotateRequest(
+      rotation=args.rotate
+      image=NLImg
+    )
+    if (args.rotate != 'NONE'):
+      result = stub.RotateImage(request)
+    if (args.mean):
+      result = stub.MeanFilter(request)
+    
 
 
 
