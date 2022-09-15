@@ -91,12 +91,13 @@ if __name__ == '__main__':
     stub = pg_grpc.NLImageServiceStub(ch)
     NLImg = pb.NLImage(color=(not isgray), data=bytesArray, width=width, height=height)
     #bytesArray = bytes([1,2,3,4,5,6,7,8,9,10,11,12])
+    #bytesArray = bytes([3,6,9,12, 2,5,8,11,1,4,7,10])
     #NLImg = pb.NLImage(color=(not isgray), data=bytesArray, width=3, height=4)
     request = pb.NLImageRotateRequest(
       rotation=req,
       image=NLImg
     )
-    if (args.rotate != 'NONE' and args.mean):
+    if (args.mean):
       result = stub.RotateImage(request)
       result = stub.MeanFilter(result)
     else:
@@ -113,24 +114,24 @@ if __name__ == '__main__':
 
   im2 = Image.new(mode="RGB", size = (result.width, result.height))
   im2.putdata(out)
-  im2.save("temp1.png")
+  filename = args.input.split("/")
+  filename = filename[len(filename) - 1]
+  print(filename)
+
+  filename = filename.split(".")
+  filename.insert(1, ".")
+  if (args.rotate != 'NONE'):
+    filename.insert(1, "_Rotated")
+  if (args.mean):
+    filename.insert(1, "_Meaned")
+  output = ''.join(filename)
+  im2.save("meaned.png")
 
   print(result.width)
   print(result.height)
     
 
 
-  #filename = args.input.split("/")
-  #filename = filename[len(filename) - 1]
-  #print(filename)
-
-  #filename = filename.split(".")
-  #filename.insert(1, ".")
-  #if (args.rotate != 'NONE'):
-  #  filename.insert(1, "_Rotated")
-  #if (args.mean):
-  #  filename.insert(1, "_Meaned")
-  #output = ''.join(filename)
   #print(output)
 
 

@@ -17,14 +17,17 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
       temp = vals
       print("rotate NONE")
     elif (request.rotation == pb.NLImageRotateRequest.NINETY_DEG):
-      temp = self.RotateNinety(width, height, vals, pos, color, 1)
+      temp = self.RotateNinety(width, height, vals, pos, color)
       width, height = height, width
       print("rotate NINETY")
     elif (request.rotation == pb.NLImageRotateRequest.ONE_EIGHTY_DEG):
-      temp = self.RotateNinety(width, height, vals, pos, color, 2)
+      temp = self.RotateNinety(width, height, vals, pos, color)
+      temp = self.RotateNinety(height, width, temp, pos, color)
       print("rotate ONE_EIGHTY_DEG")
     elif (request.rotation == pb.NLImageRotateRequest.TWO_SEVENTY_DEG):
-      temp = self.RotateNinety(width, height, vals, pos, color, 3)
+      temp = self.RotateNinety(width, height, vals, pos, color)
+      temp = self.RotateNinety(height, width, temp, pos, color)
+      temp = self.RotateNinety(width, height, temp, pos, color)
       width, height = height, width
       print("rotate TWO_SEVENTY_DEG")
     else:
@@ -37,28 +40,25 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
                             height=height)
     return response
 
-  def RotateNinety(self, width, height, vals, pos, color, times):
+  def RotateNinety(self, width, height, vals, pos, color):
     temp = [0] * len(vals)
-    for k in range(times):
-      pos = 0
-      if (color):
-        # then color image, data is a 3 channel rgb with rgb triplets stored row-wise
-        for i in range(width - 1, -1, -1):
-            for j in range(height):
-                temp[pos] = vals[i*3+j*width*3]
-                pos += 1;
-                temp[pos] = vals[i*3+j*width*3 + 1]
-                pos += 1;
-                temp[pos] = vals[i*3+j*width*3 + 2]
-                pos += 1;
-      else:
-        # grayscale image, one byte per pixel
-        for i in range(width - 1, -1, -1):
-            for j in range(height):
-                temp[pos] = vals[i+j*width]
-                pos += 1;
-      vals = temp
-      width, height = height, width
+    pos = 0
+    if (color):
+      # then color image, data is a 3 channel rgb with rgb triplets stored row-wise
+      for i in range(width - 1, -1, -1):
+          for j in range(height):
+              temp[pos] = vals[i*3+j*width*3]
+              pos += 1;
+              temp[pos] = vals[i*3+j*width*3 + 1]
+              pos += 1;
+              temp[pos] = vals[i*3+j*width*3 + 2]
+              pos += 1;
+    else:
+      # grayscale image, one byte per pixel
+      for i in range(width - 1, -1, -1):
+          for j in range(height):
+              temp[pos] = vals[i+j*width]
+              pos += 1;
     return temp
         
 
@@ -86,7 +86,9 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     else:
     # Grayscale
         res = self.meanGrayScale(data, width, height)
+    print("HI")
     response = pb.NLImage(color=color, data=bytes(res), width=width, height=height)
+    print("COMPLETE")
 
     return response
 
@@ -118,6 +120,7 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
         temp2[i].insert(width + 1,0)
     temp2.append([0] * (width + 2))
 
+    print("got here")
     for i in range(1, len(temp2) - 1):
         for j in range(1, len(temp2[0]) - 1):
             mean = 0
@@ -134,13 +137,15 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
             mean += temp2[i - 1][j - 1] + temp2[i - 1][j] + temp2[i - 1][j + 1]
             mean += temp2[i][j - 1] + temp2[i][j] + temp2[i][j + 1]
             mean += temp2[i + 1][j - 1] + temp2[i + 1][j] + temp2[i + 1][j + 1]
-            temp[i][j] = mean/div
+            temp[i][j] = int(mean/div)
+    print("got here")
     del temp[0]
     del temp[len(temp) - 1]
     res = []
     for i in range(len(temp)):
         for j in range(1, len(temp[0]) - 1):
             res.append(temp[i][j])
+    print("got here")
     return res
 
 
