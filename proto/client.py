@@ -4,6 +4,7 @@ import io
 import grpc
 import image_pb2 as pb
 import image_pb2_grpc as pg_grpc
+import numpy as np
 from PIL import Image, ImageOps
 
 def isgray(imgpath):
@@ -49,6 +50,7 @@ if __name__ == '__main__':
   # get width and height
   width = im.width
   height = im.height
+
 	
   print(width)
   print(height)
@@ -65,19 +67,33 @@ if __name__ == '__main__':
     print(len(data))
     del data[4-1::4]
 	# convert to bytes
-    for i in range(len(pix_val_flat)):
-      pix_val_flat[i] = (pix_val_flat[i]).to_bytes(1, byteorder='big')
+    #for i in range(len(pix_val_flat)):
+    #  pix_val_flat[i] = (pix_val_flat[i]).to_bytes(1, byteorder='big')
   bytesArray = bytes(data)
   #for i in range(len(data)):
   #  data[i] = (data[i]).to_bytes(1, 'big')
   print(type(data))
   print(type(bytesArray))
 	
+
+  if (args.rotate == 'NONE'):
+    req = pb.NLImageRotateRequest.NONE
+  elif (args.rotate == 'NINETY_DEG'):
+    req = pb.NLImageRotateRequest.NINETY_DEG
+  elif (args.rotate == 'ONE_EIGHTY_DEG'):
+    req = pb.NLImageRotateRequest.ONE_EIGHTY_DEG
+  elif (args.rotate == 'TWO_SEVENTY_DEG'):
+    req = pb.NLImageRotateRequest.TWO_SEVENTY_DEG
+  else:
+    print("invalid rotation specification")
+
   with grpc.insecure_channel("localhost:8080") as ch:
     stub = pg_grpc.NLImageServiceStub(ch)
     NLImg = pb.NLImage(color=(not isgray), data=bytesArray, width=width, height=height)
+    #bytesArray = bytes([1,2,3,4,5,6,7,8,9,10,11,12])
+    #NLImg = pb.NLImage(color=(not isgray), data=bytesArray, width=3, height=4)
     request = pb.NLImageRotateRequest(
-      rotation=args.rotate,
+      rotation=req,
       image=NLImg
     )
     if (args.rotate != 'NONE' and args.mean):
@@ -87,24 +103,38 @@ if __name__ == '__main__':
       print("what up")
       result = stub.RotateImage(request)
       print("bye")
+  #print(list(result.data))
+  processedData = list(result.data)
+  out = []
+  if (isgray):
+    for i in range(len(processedData)):
+        out.append((processedData[i], processedData[i], processedData[i], 255))
+  print(out)
+
+  im2 = Image.new(mode="RGB", size = (result.width, result.height))
+  im2.putdata(out)
+  im2.save("temp1.png")
+
+  print(result.width)
+  print(result.height)
     
 
 
-  filename = args.input.split("/")
-  filename = filename[len(filename) - 1]
-  print(filename)
+  #filename = args.input.split("/")
+  #filename = filename[len(filename) - 1]
+  #print(filename)
 
-  filename = filename.split(".")
-  filename.insert(1, ".")
-  if (args.rotate != 'NONE'):
-    filename.insert(1, "_Rotated")
-  if (args.mean):
-    filename.insert(1, "_Meaned")
-  output = ''.join(filename)
-  print(output)
+  #filename = filename.split(".")
+  #filename.insert(1, ".")
+  #if (args.rotate != 'NONE'):
+  #  filename.insert(1, "_Rotated")
+  #if (args.mean):
+  #  filename.insert(1, "_Meaned")
+  #output = ''.join(filename)
+  #print(output)
 
 
 
-  f = open(args.output + "/" + output, "wb")
-  f.write(im_byte_arr)
-  f.close()
+  #f = open(args.output + "/" + output, "wb")
+  #f.write(im_byte_arr)
+  #f.close()
