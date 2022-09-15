@@ -56,36 +56,38 @@ if __name__ == '__main__':
   if (isgray):
     data = []
     for i in range(len(pix_val)):
-        data.append((pix_val[i][0]).to_bytes(1, byteorder='big'))
-    print(len(data))
-    #print(grayVals)
-    #TODO
-    #confirm that casting back to int from byte array results in the same int arry
+        data.append(pix_val[i][0])
+    #for i in range(len(pix_val)):
+    #    data[i] = int.from_bytes(data[i], "big")
   else:
     print(len(pix_val))
     data = [x for sets in pix_val for x in sets]
     print(len(data))
     del data[4-1::4]
 	# convert to bytes
-	#for i in range(len(pix_val_flat)):
-	#	pix_val_flat[i] = (pix_val_flat[i]).to_bytes(1, byteorder='big')
-    print(len(data))
-    #print(pix_val_flat)
+    for i in range(len(pix_val_flat)):
+      pix_val_flat[i] = (pix_val_flat[i]).to_bytes(1, byteorder='big')
+  bytesArray = bytes(data)
+  #for i in range(len(data)):
+  #  data[i] = (data[i]).to_bytes(1, 'big')
+  print(type(data))
+  print(type(bytesArray))
 	
   with grpc.insecure_channel("localhost:8080") as ch:
-	stub = pg_grpc.NLImageServiceStub(ch)
-    NLImg = pb.NLImage(color=isgray, data=data, width=width, height=height)
+    stub = pg_grpc.NLImageServiceStub(ch)
+    NLImg = pb.NLImage(color=(not isgray), data=bytesArray, width=width, height=height)
     request = pb.NLImageRotateRequest(
-      rotation=args.rotate
+      rotation=args.rotate,
       image=NLImg
     )
-    if (args.rotate != 'NONE'):
+    if (args.rotate != 'NONE' and args.mean):
       result = stub.RotateImage(request)
-    if (args.mean):
-      result = stub.MeanFilter(request)
+      result = stub.MeanFilter(result)
+    else:
+      print("what up")
+      result = stub.RotateImage(request)
+      print("bye")
     
-
-
 
 
   filename = args.input.split("/")

@@ -6,34 +6,35 @@ from concurrent import futures
 
 class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
   def RotateImage(self, request, context):
-	# rotates images by 90
+    # rotates images by 90
     width = request.image.width
     height = request.image.height
-    vals = request.image.bytes
-	color = request.image.color
+    vals = request.image.data
+    color = request.image.color
     temp = [0] * len(vals)
     pos = 0
 
-	if (request.rotation == pb_grpc.NLImageRotateRequest.Rotation.NONE):
-		temp = vals
-	elif (request.rotation == pb_grpc.NLImageRotateRequest.Rotation.NINETY_DEG):
-		temp = RotateNinety(width, height, vals, pos, temp, color, 1)
-	elif (request.rotation == pb_grpc.NLImageRotateRequest.Rotation.ONE_EIGHTY_DEG):
-		temp = RotateNinety(width, height, vals, pos, temp, color, 2)
-	elif (request.rotation == pb_grpc.NLImageRotateRequest.Rotation.TWO_SEVENTY_DEG):
-		temp = RotateNinety(width, height, vals, pos, temp, color, 3)
-	else:
-		# TODO
-		# THROW SOME SORT OF ERROR, INVALID REQUEST
-	response = pb.NLImage(color=request.image.color,
-							data=temp,
-							width=request.image.width,
-							height=request.image.height)
-	return response
+    if (request.rotation == pb.NLImageRotateRequest.NONE):
+      temp = vals
+    elif (request.rotation == pb.NLImageRotateRequest.NINETY_DEG):
+      temp = self.RotateNinety(width, height, vals, pos, temp, color, 1)
+    elif (request.rotation == pb.NLImageRotateRequest.ONE_EIGHTY_DEG):
+      temp = self.RotateNinety(width, height, vals, pos, temp, color, 2)
+    elif (request.rotation == pb.NLImageRotateRequest.TWO_SEVENTY_DEG):
+      temp = self.RotateNinety(width, height, vals, pos, temp, color, 3)
+    else:
+      print("you fucked up")
+        # TODO
+        # THROW SOME SORT OF ERROR, INVALID REQUEST
+    response = pb.NLImage(color=request.image.color,
+                            data=temp,
+                            width=request.image.width,
+                            height=request.image.height)
+    return response
 
   def RotateNinety(self, width, height, vals, pos, temp, color, times):
     temp = [0] * len(vals)
-	for k in range(times):
+    for k in range(times):
       if (color):
         # then color image, data is a 3 channel rgb with rgb triplets stored row-wise
         for i in range(width - 1, -1, -1):
@@ -51,33 +52,33 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
                 temp[pos] = vals[i+j*width]
                 pos += 1;
     return temp
-		
+        
 
   def MeanFilter(self, request, context):
-	color = request.color;
-	data = request.data;
-	width = request.width;
-	height = request.height;
+    color = request.color;
+    data = request.data;
+    width = request.width;
+    height = request.height;
 
-	temp = [0] * len(data)
-	pos = 0
-	count = 0
-	if (color):
-	# RGB, 3 channels
-		res1 = meanRGB(data, width, height, 0)
-		res2 = meanRGB(data, width, height, 1)
-		res3 = meanRGB(data, width, height, 2)
-		res = []
-		# res1 represents the R mean matrix, res2 represents G mean matrix, res3 represents B mean matrix
-		# here we interleave the R, G, B matrices to reconstruct the overall mean filtered matrix
-		for i in range(len(res1)):
-			res.append(res1[i])
-			res.append(res2[i])
-			res.append(res3[i])
-	else:
-	# Grayscale
-		res = meanGrayScale(data, width, height)
-	response = pb.NLImage(color=color, data=res, width=width, height=height)
+    temp = [0] * len(data)
+    pos = 0
+    count = 0
+    if (color):
+    # RGB, 3 channels
+        res1 = meanRGB(data, width, height, 0)
+        res2 = meanRGB(data, width, height, 1)
+        res3 = meanRGB(data, width, height, 2)
+        res = []
+        # res1 represents the R mean matrix, res2 represents G mean matrix, res3 represents B mean matrix
+        # here we interleave the R, G, B matrices to reconstruct the overall mean filtered matrix
+        for i in range(len(res1)):
+            res.append(res1[i])
+            res.append(res2[i])
+            res.append(res3[i])
+    else:
+    # Grayscale
+        res = meanGrayScale(data, width, height)
+    response = pb.NLImage(color=color, data=res, width=width, height=height)
 
     return response
 
@@ -90,7 +91,7 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
         col = (i//3) % width
         temp2[row + 1][col] = l[i]
         print(str(row) + "  " + str(col))
-	return meanFilter(temp, temp2)
+    return meanFilter(temp, temp2)
 
   def meanGrayScale(l, width, height):
     temp = [[0] * (width + 2) for i in range(height + 2)]
@@ -100,7 +101,7 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
         row = i // width
         col = i % width
         temp2[row + 1][col] = l[i]
-	return meanFilter(temp, temp2)
+    return meanFilter(temp, temp2)
 
   def meanFilter(temp, temp2):
     # pad with 0s
@@ -132,13 +133,13 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     for i in range(len(temp)):
         for j in range(1, len(temp[0]) - 1):
             res.append(temp[i][j])
-	return res
+    return res
 
 
     
 
 def serve():
-  server = grpc.server(future.ThreadPoolExecutor(max_workers=10))
+  server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
   pb_grpc.add_NLImageServiceServicer_to_server(NLImageServiceServicer(), server)
   server.add_insecure_port('[::]:8080')
   server.start()
