@@ -45,7 +45,6 @@ if __name__ == '__main__':
   print(type(im_byte_arr))
   #print(im_byte_arr)
   pix_val = list(im.getdata())
-  #print(pix_val)
 
   # get width and height
   width = im.width
@@ -63,9 +62,16 @@ if __name__ == '__main__':
     #    data[i] = int.from_bytes(data[i], "big")
   else:
     print(len(pix_val))
-    data = [x for sets in pix_val for x in sets]
-    print(len(data))
-    del data[4-1::4]
+    if (type(pix_val[0]) != int):
+      if (len(pix_val[0]) == 4):
+        #RGBA
+        data = [x for sets in pix_val for x in sets]
+        del data[4-1::4]
+      elif (len(pix_val[0]) == 3):
+        data = [x for sets in pix_val for x in sets]
+    else:
+      data = pix_val
+
 	# convert to bytes
     #for i in range(len(pix_val_flat)):
     #  pix_val_flat[i] = (pix_val_flat[i]).to_bytes(1, byteorder='big')
@@ -87,7 +93,7 @@ if __name__ == '__main__':
   else:
     print("invalid rotation specification")
 
-  with grpc.insecure_channel("localhost:8080") as ch:
+  with grpc.insecure_channel("localhost:8080", options=[('grpc.max_message_length', 100000000), ('grpc.max_receive_message_length', 100000000)]) as ch:
     stub = pg_grpc.NLImageServiceStub(ch)
     NLImg = pb.NLImage(color=(not isgray), data=bytesArray, width=width, height=height)
     #bytesArray = bytes([1,2,3,4,5,6,7,8,9,10,11,12])
@@ -106,11 +112,15 @@ if __name__ == '__main__':
       print("bye")
   #print(list(result.data))
   processedData = list(result.data)
+  #print(processedData)
   out = []
   if (isgray):
     for i in range(len(processedData)):
         out.append((processedData[i], processedData[i], processedData[i], 255))
-  print(out)
+  else:
+    for i in range(0, len(processedData), 3):
+        out.append((processedData[i], processedData[i + 1], processedData[i + 2], 255))
+  #print(out)
 
   im2 = Image.new(mode="RGB", size = (result.width, result.height))
   im2.putdata(out)
@@ -125,7 +135,7 @@ if __name__ == '__main__':
   if (args.mean):
     filename.insert(1, "_Meaned")
   output = ''.join(filename)
-  im2.save("meaned.png")
+  im2.save("mean.png")
 
   print(result.width)
   print(result.height)

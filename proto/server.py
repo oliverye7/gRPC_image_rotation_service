@@ -73,9 +73,9 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     count = 0
     if (color):
     # RGB, 3 channels
-        res1 = meanRGB(data, width, height, 0)
-        res2 = meanRGB(data, width, height, 1)
-        res3 = meanRGB(data, width, height, 2)
+        res1 = self.meanRGB(data, width, height, 0)
+        res2 = self.meanRGB(data, width, height, 1)
+        res3 = self.meanRGB(data, width, height, 2)
         res = []
         # res1 represents the R mean matrix, res2 represents G mean matrix, res3 represents B mean matrix
         # here we interleave the R, G, B matrices to reconstruct the overall mean filtered matrix
@@ -152,7 +152,10 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     
 
 def serve():
-  server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+  server = grpc.server(futures.ThreadPoolExecutor(max_workers=10), options = [
+            ('grpc.max_send_message_length', 100000000),
+            ('grpc.max_receive_message_length', 100000000)
+        ])
   pb_grpc.add_NLImageServiceServicer_to_server(NLImageServiceServicer(), server)
   server.add_insecure_port('[::]:8080')
   server.start()
