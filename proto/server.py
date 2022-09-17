@@ -5,39 +5,49 @@ import image_pb2_grpc as pb_grpc
 from concurrent import futures
 
 class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
+  def checkInput(self, width, height, vals, color):
+
+    # error handling
+    if (color):
+      if (width * height * 3 != len(vals)) or (len(vals) % 9 != 0):
+        width = -2
+        response = pb.NLImage(color=color, data=vals, width=width, height=height)
+        return response
+    else:
+      if (width * height != len(vals)) or (len(vals) % 3 != 0):
+        width = -2
+        response = pb.NLImage(color=color, data=vals, width=width, height=height)
+        return response
+    return 0
+
   def RotateImage(self, request, context):
-    # rotates images by 90
     width = request.image.width
     height = request.image.height
     vals = request.image.data
     color = request.image.color
     pos = 0
 
+    err = self.checkInput(width, height, vals, color)
+    if (err != 0):
+      return err
+    
     if (request.rotation == pb.NLImageRotateRequest.NONE):
       temp = vals
-      print("rotate NONE")
     elif (request.rotation == pb.NLImageRotateRequest.NINETY_DEG):
       temp = self.RotateNinety(width, height, vals, pos, color)
       width, height = height, width
-      print("rotate NINETY")
     elif (request.rotation == pb.NLImageRotateRequest.ONE_EIGHTY_DEG):
       temp = self.RotateNinety(width, height, vals, pos, color)
       temp = self.RotateNinety(height, width, temp, pos, color)
-      print("rotate ONE_EIGHTY_DEG")
     elif (request.rotation == pb.NLImageRotateRequest.TWO_SEVENTY_DEG):
       temp = self.RotateNinety(width, height, vals, pos, color)
       temp = self.RotateNinety(height, width, temp, pos, color)
       temp = self.RotateNinety(width, height, temp, pos, color)
       width, height = height, width
-      print("rotate TWO_SEVENTY_DEG")
     else:
-      print("you fucked up")
-        # TODO
-        # THROW SOME SORT OF ERROR, INVALID REQUEST
-    response = pb.NLImage(color=color,
-                            data=bytes(temp),
-                            width=width,
-                            height=height)
+      width = -1
+
+    response = pb.NLImage(color=color, data=bytes(temp), width=width, height=height)
     return response
 
   def RotateNinety(self, width, height, vals, pos, color):
@@ -63,10 +73,14 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
         
 
   def MeanFilter(self, request, context):
-    color = request.color;
-    data = request.data;
     width = request.width;
     height = request.height;
+    data = request.data;
+    color = request.color;
+
+    err = self.checkInput(width, height, data, color)
+    if (err != 0):
+      return err
 
     temp = [0] * len(data)
     pos = 0
@@ -86,9 +100,7 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     else:
     # Grayscale
         res = self.meanGrayScale(data, width, height)
-    print("HI")
     response = pb.NLImage(color=color, data=bytes(res), width=width, height=height)
-    print("COMPLETE")
 
     return response
 
@@ -100,7 +112,6 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
         row = (i//3) // width
         col = (i//3) % width
         temp2[row + 1][col] = l[i]
-        print(str(row) + "  " + str(col))
     return self.meanFilter(temp, temp2, height, width)
 
   def meanGrayScale(self, l, width, height):
@@ -120,7 +131,6 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
         temp2[i].insert(width + 1,0)
     temp2.append([0] * (width + 2))
 
-    print("got here")
     for i in range(1, len(temp2) - 1):
         for j in range(1, len(temp2[0]) - 1):
             mean = 0
@@ -138,14 +148,12 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
             mean += temp2[i][j - 1] + temp2[i][j] + temp2[i][j + 1]
             mean += temp2[i + 1][j - 1] + temp2[i + 1][j] + temp2[i + 1][j + 1]
             temp[i][j] = int(mean/div)
-    print("got here")
     del temp[0]
     del temp[len(temp) - 1]
     res = []
     for i in range(len(temp)):
         for j in range(1, len(temp[0]) - 1):
             res.append(temp[i][j])
-    print("got here")
     return res
 
 
