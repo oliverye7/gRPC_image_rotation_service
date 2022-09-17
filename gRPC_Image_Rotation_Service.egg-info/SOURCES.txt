@@ -1,0 +1,11 @@
+README.md
+setup.py
+RotationService/proto/client.py
+RotationService/proto/image_pb2.py
+RotationService/proto/image_pb2_grpc.py
+RotationService/proto/server.py
+gRPC_Image_Rotation_Service.egg-info/PKG-INFO
+gRPC_Image_Rotation_Service.egg-info/SOURCES.txt
+gRPC_Image_Rotation_Service.egg-info/dependency_links.txt
+gRPC_Image_Rotation_Service.egg-info/requires.txt
+gRPC_Image_Rotation_Service.egg-info/top_level.txt
