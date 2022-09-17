@@ -1,4 +1,2 @@
-# gRPC Image Rotation Serice
-
-## Instructions
-
+# NeuralinkTechnical
+Neuralink Technical Interview
