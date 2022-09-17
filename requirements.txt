@@ -1,5 +1,6 @@
-grpcio==1.26.0rc1
+grpcio==1.48.1
 numpy==1.23.3
 opencv_python==4.6.0.66
 Pillow==9.2.0
 protobuf==4.21.6
+setuptools==65.3.0
