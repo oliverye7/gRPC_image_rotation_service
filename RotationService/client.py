@@ -2,11 +2,16 @@ import argparse
 import cv2
 import io
 import grpc
-import image_pb2 as pb
-import image_pb2_grpc as pg_grpc
 import numpy as np
 import sys
 from PIL import Image, ImageOps
+
+sys.path.insert(0, '/Users/oliver/Code/NLTechnical/RotationService/proto')
+
+import image_pb2 as pb
+import image_pb2_grpc as pb_grpc
+
+
 
 def isgray(imgpath):
     img = cv2.imread(imgpath)
@@ -89,7 +94,7 @@ if __name__ == '__main__':
 
   # send out/receive requests, set up messages
   with grpc.insecure_channel(args.host + ":" + args.port, options=[('grpc.max_message_length', 100000000), ('grpc.max_receive_message_length', 100000000)]) as ch:
-    stub = pg_grpc.NLImageServiceStub(ch)
+    stub = pb_grpc.NLImageServiceStub(ch)
     NLImg = pb.NLImage(color=(not isgray), data=bytesArray, width=width, height=height)
     request = pb.NLImageRotateRequest(
       rotation=req,

@@ -1,7 +1,12 @@
 import grpc
 import argparse
+import sys
+
+sys.path.insert(1, '/Users/oliver/Code/NLTechnical/RotationService/proto') 
+
 import image_pb2 as pb
 import image_pb2_grpc as pb_grpc
+
 
 from concurrent import futures
 
@@ -15,7 +20,6 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     height (int): height of image passed in (from NLImage.height)
     vals (bytes): bytes of image pixel values, as a flattened 1D list (from NLImage.data)
     color (boolean): determines if the bytes in vals correspond to pixels 3 by 1 or 1 by 1
-
     Returns:
     0: means success
 	NLImage with width = -2: poorly formed protobuf message request was received
@@ -40,7 +44,6 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
    	Parameters:
 	request: NLImageRotateRequest message, which contains the picture data in 'image', and the number of
 			 rotations in 'rotation'
-
     Returns:
 	NLImage: NLImage message with the rotated input
     """
@@ -75,7 +78,6 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
   def RotateNinety(self, width, height, vals, color):
     """ 
 	Takes a 1D array of vals representing the pixels of an image in row major order, and rotates it by 90 degrees.
-
    	Parameters:
 	width (int): width of specified image
 	height (int): height of specified image
@@ -83,7 +85,6 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
 	three bytes will correspond to one pixel. If the 'color' parameter is false (gray), then each byte corresponds to
 	one pixel.
 	color (boolean): whether or not the image is in color (three channel) or grayscale (one channel)
-
     Returns:
 	list[int]: list of pixel values that have been rotated counterclockwise 90 degrees
     """
@@ -113,17 +114,13 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     A B C
     D E F
     G H I
-
     Then a few examples of pixels from the mean filter of this image are:
        A_mean_filter = (A + B + E + D) / 4
        D_mean_filter = (D + A + B + E + G + H) / 6
        E_mean_filter = (E + A + B + C + D + F + G + H + I) / 9
-
     For color images, the mean filter is the image with this filter run on each of the 3 channels independently.
-
    	Parameters:
 	request: NLImage message carrying the data in an image
-
     Returns:
 	NLImage: NLImage message with the the data list with a mean filter applied
     """
@@ -163,14 +160,12 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     """ 
 	Takes the mean filter of an RGB image by taking the meanFilter of each other pixel, with an offset of 'offset'
 	in the byte list. meanRGB does some additional processing to account for the fact that a meanRGB has 3 color channels.
-
    	Parameters:
 	data (list): list of pixel values corresponding to an RGB color
 	width (int): width of the image
 	height (int): height of the image
 	offset (int): specifies which mean filter we are taking (e.g. mean filter of red pixels, mean filter of green pixels, o
 				  mean filter of blue pixels)
-
     Returns:
 	list[int]: list of pixels that have been mean filtered
     """
@@ -187,12 +182,10 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     """ 
 	Takes the mean filter of a grayscale image, by directly calling the meanFilter function after converting the 1d array
 	into a 2D array for easier readability
-
    	Parameters:
 	data (list): list of pixel values corresponding to an RGB color
 	width (int): width of the image
 	height (int): height of the image
-
     Returns:
 	list[int]: list of pixels that have been mean filtered
     """
@@ -209,13 +202,11 @@ class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
     """ 
 	Executes the mean filter operation on an arbitrary 2D set of arrays, returning a meaned 2D array. This function is
 	called three times for an RGB image (once for R, once for G, once for B), and once for a grayscale image.
-
    	Parameters:
 	temp (list[int]): "output" 2d array, to contain the means of values in the temp2 input array
 	temp2 (list[int]): "input" 2d array, to be padded with a layer of zeros around the edges to make arithmetic easier
 	height (int): height of our image
 	width (int): width of an image
-
     Returns:
 	list[int]: list of pixels that have been mean filtered, as a 1d array -- the values of 'temp' but laid out in row
 			   major order

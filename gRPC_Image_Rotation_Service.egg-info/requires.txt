@@ -1,5 +1,0 @@
-grpcio
-numpy
-opencv_python
-Pillow
-protobuf

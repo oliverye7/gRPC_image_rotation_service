@@ -1,8 +1,0 @@
-Metadata-Version: 2.1
-Name: gRPC-Image-Rotation-Service
-Version: 1.0.0
-Summary: Neuralink Technical Challenge
-Author: Oliver Ye
-Author-email: oliverye@berkeley.edu
-License: MIT
-Requires-Python: ~=3.9
