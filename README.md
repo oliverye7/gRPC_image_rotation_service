@@ -52,8 +52,6 @@ An example command would be:
 Most small to medium sized images will take a couple seconds (or less), but larger images (3000 x 4000 pixels) can take around 50 seconds to process.
 
 ## Dockerization <a name="docker"></a>
-I also dockerized the process -- I chose to only Dockerize the server, since it would make sense that a server is "containerized" and that the client can be run locally.
-
 My `DockerFile` is included in the `RotationService` folder. 
 
 To see the process in action, run 
@@ -61,8 +59,6 @@ To see the process in action, run
 `docker build -t my-server .` to build, followed by
 
 `docker run -it -p 8080:8080 --rm --name rotation-service my-server` to run the docker container. 
-
-I was unable to test on other host IPs, but I'm able to get it to work with the host set to 0.0.0.0 to test locally; then, the  `-p` argument (port forwarding) just connects the port from the docker container to port 8080, so client (local) can communicate with the server (container).
 
 While using the Dockerized version of the service, if you want to change the port you're connecting to, you need to change the two numbers following `-p` to `<from port>:<to port>`, but it's probably most convenient to just have them be the same port number to avoid confusion. You will also need to specify the port you want to use in the client.py --port parameter. 
 
