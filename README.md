@@ -43,21 +43,26 @@ applied to the image. Again, _host_ will be set to _localhost_ and _port_ will b
 
 So `python3 client.py --input <...> --output <...> --rotate <...> --mean` is a valid command as well.
 
+An example command would be:
+
+`python3 client.py --input ./input/dog.png --output ./output --rotate ONE_EIGHTY_DEG --mean`
+
 Most small to medium sized images will take a couple seconds (or less), but larger images (3000 x 4000 pixels) can take around 50 seconds to process.
 
 ## Dockerization <a name="docker"></a>
-I was not able to successfully Dockerize the rotation service, but I was very close to succeeding. My suspicion is that there was something wrong with my understanding of port forwarding, since I was able
-to successfully Dockerize my server, but unable to connect to it via the client. I chose to only Dockerize the server, since it would make sense that a server is "containerized" and that the client can be run locally.
+I also dockerized the process -- I chose to only Dockerize the server, since it would make sense that a server is "containerized" and that the client can be run locally.
 
 My `DockerFile` is included in the `RotationService` folder. 
 
-I run `docker build -t my-server .` to build, followed by
+To see the process in action, run 
 
+`docker build -t my-server .` to build, followed by
 
-`docker run -it -p 8080:8080 --rm --name rotation-service my-server` to run the docker container. This (I believe) successfully runs the server, but the client has difficulty connecting to the server, even when it is sending 
-requests on `localhost:8080`. 
+`docker run -it -p 8080:8080 --rm --name rotation-service my-server` to run the docker container. 
 
-I'm not too sure what the issue is here, but if given more time I would definitely have solved this problem. I'll think more about this problem through next week and try to resolve the issue if I can.
+I was unable to test on other host IPs, but I'm able to get it to work with the host set to 0.0.0.0 to test locally; then, the  `-p` argument (port forwarding) just connects the port from the docker container to port 8080, so client (local) can communicate with the server (container).
+
+While using the Dockerized version of the service, if you want to change the port you're connecting to, you need to change the two numbers following `-p` to `<from port>:<to port>`, but it's probably most convenient to just have them be the same port number to avoid confusion. You will also need to specify the port you want to use in the client.py --port parameter.
 
 ## Discussion and Thoughts <a name="disc"></a>
 
