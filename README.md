@@ -22,6 +22,8 @@ Alternatively, if python is already installed on your computer, running `python3
 
 There are no build steps in my solution, so I have not included a build script.
 
+Note: apparently on some Mac silicon Macbooks, grpcio might not be installed properly through pip. There's a small chance that you might have to run `pip uninstall grpcio` and then `conda install grpcio` to properly install it. I didn't have to do this, but this means that you would have to install conda through `bash Miniconda3-latest-MacOSX-x86_64.sh` and then following the entire set of instructions associated there :(
+
 ## Usage <a name="usage"></a>
 The `RotationService` folder contains an `input` and `output` folder for testing purposes, but feel free to add your own photos or test differently. I've emptied the `output` folder, but the `input` folder consists of a number of
 .pngs, .jpegs, and other miscellaneous irregular files.

@@ -6,8 +6,6 @@ import numpy as np
 import sys
 from PIL import Image, ImageOps
 
-sys.path.insert(0, "/Users/oliver/Code/NLTechnical/RotationService/proto")
-
 import image_pb2 as pb
 import image_pb2_grpc as pb_grpc
 
@@ -58,14 +56,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print()
 
+    rot = 0
     if args.rotate == "NONE":
         req = pb.NLImageRotateRequest.NONE
     elif args.rotate == "NINETY_DEG":
         req = pb.NLImageRotateRequest.NINETY_DEG
+        rot = 90
     elif args.rotate == "ONE_EIGHTY_DEG":
         req = pb.NLImageRotateRequest.ONE_EIGHTY_DEG
+        rot = 180
     elif args.rotate == "TWO_SEVENTY_DEG":
         req = pb.NLImageRotateRequest.TWO_SEVENTY_DEG
+        rot = 270
     else:
         print("invalid rotation specification.")
         print(
@@ -167,7 +169,7 @@ if __name__ == "__main__":
     filename = filename.split(".")
     filename.insert(1, ".")
     if args.rotate != "NONE":
-        filename.insert(1, "_Rotated")
+        filename.insert(1, "_rot" + str(rot))
     if args.mean:
         filename.insert(1, "_Meaned")
     output = "".join(filename)

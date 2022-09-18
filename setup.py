@@ -9,6 +9,7 @@ setup(
     license='MIT',
     install_requires=[
         'grpcio',
+        'grpcio-tools',
         'numpy',
         'opencv_python',
         'Pillow',
