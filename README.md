@@ -64,7 +64,9 @@ To see the process in action, run
 
 I was unable to test on other host IPs, but I'm able to get it to work with the host set to 0.0.0.0 to test locally; then, the  `-p` argument (port forwarding) just connects the port from the docker container to port 8080, so client (local) can communicate with the server (container).
 
-While using the Dockerized version of the service, if you want to change the port you're connecting to, you need to change the two numbers following `-p` to `<from port>:<to port>`, but it's probably most convenient to just have them be the same port number to avoid confusion. You will also need to specify the port you want to use in the client.py --port parameter.
+While using the Dockerized version of the service, if you want to change the port you're connecting to, you need to change the two numbers following `-p` to `<from port>:<to port>`, but it's probably most convenient to just have them be the same port number to avoid confusion. You will also need to specify the port you want to use in the client.py --port parameter. 
+
+If you want to change the host for this version, you need to just vim directly into Dockerfile, and update the host specified directly there. There's a way to get Docker to take CLI inputs, but I figured that this was a simple enough step, so I didn't include it.
 
 ## Discussion and Thoughts <a name="disc"></a>
 
