@@ -1,7 +1,7 @@
 # gRPC Image Rotation Serice
 
 Hi! My name is Oliver Ye, a student at UC Berkeley dual majoring in Electrical Engineering & Computer Science + Business Administration. This technical challenge was really fun and fresh for me, especially since I'd never used (or even
-heard of) most of the skills and tools in this challenge. Using gRPC and Docker were both completely new to me, but I was definitely super stimulated by the challenge.
+heard of) most of the skills and tools in this challenge. Using gRPC and Docker were both completely new to me, but I was definitely super stimulated ane excited by the challenge.
 
 Hope you enjoy reading my code as much as I enjoyed working on this!
 
