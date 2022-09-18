@@ -16,6 +16,8 @@ Hope you enjoy reading my code as much as I enjoyed working on this!
 ## Setup <a name="setup"></a>
 Please run my solution on a clean install of **MacOS**
 
+To test the Dockerized version, feel free to jump directly to _**[Docker](#docker)**_
+
 First, run `bash setup.sh` which should take care of installing any dependencies (installs homebrew, python3, dependencies).
 
 Alternatively, if python is already installed on your computer, running `python3 setup.py install` should take care of dependencies as well.
