@@ -1,7 +1,7 @@
 # gRPC Image Rotation Serice
 
 Hi! My name is Oliver Ye, a student at UC Berkeley dual majoring in Electrical Engineering & Computer Science + Business Administration. This technical challenge was really fun and fresh for me, especially since I'd never used (or even
-heard of) most of the skills and tools in this challenge. Using gRPC and Docker were both completely new to me, but I was definitely super stimulated ane excited by the challenge.
+heard of) most of the skills and tools in this challenge. Using gRPC and Docker were both completely new to me, but I was definitely super stimulated by the challenge.
 
 Hope you enjoy reading my code as much as I enjoyed working on this!
 
@@ -15,6 +15,8 @@ Hope you enjoy reading my code as much as I enjoyed working on this!
 
 ## Setup <a name="setup"></a>
 Please run my solution on a clean install of **MacOS**
+
+To test the Dockerized version, feel free to jump directly to _**[Docker](#docker)**_
 
 First, run `bash setup.sh` which should take care of installing any dependencies (installs homebrew, python3, dependencies).
 
@@ -73,3 +75,5 @@ This challenge was definitely really exciting and fun for me! I think I really f
 Similarly, there are a lot of optimizations to be found in my `MeanFilter` function, where I first cast the entire 1D array into a 2D array for easier processing and code readability. There's a solution which avoids casting the input into a 2D array and the recasting the output back into 1D, but it uses some math and my goal was primarily to get a functional model working in 2 days first.
 2) Time permitting, I would have also looked into potential issues with security and bandwidth of the solution that I build. For example, I the server uses `insecureport()`, which I would try to resolve as one of my priorities if this were an actual production. 
     - I'm not too sure how the default gRPC messaging system handles this, but I'd also look into implementing some sort of queue or "multitasking" system on the server end for requests. I noticed that when multiple large requests are sent in close succession (e.g. multiple rotate + mean commands on the `temp.png` file), the server takes a significantly longer time to respond. I sent in maybe 6-7 requests, and instead of coming back 1 by 1 in a staggered order, it took a total of 4 minutes and all requests finished at around the same time. I know this has to do with the number of workers being active (setting maxWorkers = 1) on ThreadPoolExecutor results in requests being processed 1 by 1, but even so, I wonder if there's some way to deal with a very large number of inputs at once.
+
+
