@@ -8,6 +8,7 @@ import image_pb2 as pb
 import image_pb2_grpc as pb_grpc
 
 
+
 from concurrent import futures
 
 class NLImageServiceServicer(pb_grpc.NLImageServiceServicer):
