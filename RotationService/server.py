@@ -280,5 +280,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    print("Server running on " + args.host + ":" + args.port)
 
     serve(args.port, args.host)

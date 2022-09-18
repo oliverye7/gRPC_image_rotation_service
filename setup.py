@@ -12,6 +12,7 @@ setup(
         'grpcio-tools',
         'numpy',
         'opencv_python',
+        'opencv-python',
         'Pillow',
         'protobuf',
     ],

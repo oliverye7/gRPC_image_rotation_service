@@ -1,7 +1,7 @@
 grpcio
 grpcio-tools
-grpc
 numpy
 opencv_python
+opencv-python
 Pillow
 protobuf
