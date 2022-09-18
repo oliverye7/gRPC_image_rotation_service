@@ -2,8 +2,6 @@ import grpc
 import argparse
 import sys
 
-sys.path.insert(1, "/Users/oliver/Code/NLTechnical/RotationService/proto")
-
 import image_pb2 as pb
 import image_pb2_grpc as pb_grpc
 
