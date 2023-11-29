@@ -2,6 +2,8 @@
 
 Hi! My name is Oliver Ye, a student at UC Berkeley dual majoring in Electrical Engineering & Computer Science + Business Administration. This was a technical challenge where I built an image processing API (rotations, and mean filters) using gRPC to build a server to process requests; the project was Dockerized to be able to run on a clean install of MacOS. The general goal was to build something with gRPC properly; I didn't go crazy on the API functions, but could have probably added more filters or functions if needed.
 
+project tldr: you can run the server, and ping it with requests to process images via the client. Communication occurs via gRPC (as defined by a `.proto` file). The project can also be run on an actual server, via a Dockerized solution.
+
 # Table of contents
 1. [Setup](#setup)
 2. [Usage](#usage)
