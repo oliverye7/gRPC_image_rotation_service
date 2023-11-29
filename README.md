@@ -1,9 +1,6 @@
 # gRPC Image Rotation Serice
 
-Hi! My name is Oliver Ye, a student at UC Berkeley dual majoring in Electrical Engineering & Computer Science + Business Administration. This technical challenge was really fun and fresh for me, especially since I'd never used (or even
-heard of) most of the skills and tools in this challenge. Using gRPC and Docker were both completely new to me, but I was definitely super stimulated by the challenge.
-
-Hope you enjoy reading my code as much as I enjoyed working on this!
+Hi! My name is Oliver Ye, a student at UC Berkeley dual majoring in Electrical Engineering & Computer Science + Business Administration. This was a technical challenge where I built an image processing API (rotations, and mean filters) using gRPC to build a server to process requests; the project was Dockerized to be able to run on a clean install of MacOS. The general goal was to build something with gRPC properly; I didn't go crazy on the API functions, but could have probably added more filters or functions if needed.
 
 # Table of contents
 1. [Setup](#setup)
