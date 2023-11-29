@@ -4,6 +4,8 @@ Hi! My name is Oliver Ye, a student at UC Berkeley dual majoring in Electrical E
 
 project tldr: you can run the server, and ping it with requests to process images via the client. Communication occurs via gRPC (as defined by a `.proto` file). The project can also be run on an actual server, via a Dockerized solution.
 
+full prompt can be found in `prompt.md`
+
 # Table of contents
 1. [Setup](#setup)
 2. [Usage](#usage)
