@@ -36,8 +36,8 @@ By default, _host_ will be set to _localhost_ and _port_ will be set to _8080_, 
 
 
 #### **Client:** <a name="client"></a>
-Run `python3 client.py --port <...> --host <...> --input <...> --output <...> --rotate <...> --mean` use the service. The `--mean` argument is optional: if it is not included, the mean filter will not be
-applied to the image. Again, _host_ will be set to _localhost_ and _port_ will be set to _8080_, if unspecified on the client.
+Run `python3 client.py --port <port> --host <host> --input <input path> --output <output path> --rotate <rotation amount> --mean` use the service. The `--mean` argument is optional: if it is not included, the mean filter will not be
+applied to the image. Again, _host_ will be set to _localhost_ and _port_ will be set to _8080_, if unspecified on the client. `NONE, NINETY_DEG, ONE_EIGHTY_DEG, TWO_SEVENTY_DEG` are supported rotation amounts. If the --rotate flag is not included, it will default to "NONE
 
 
 So `python3 client.py --input <...> --output <...> --rotate <...> --mean` is a valid command as well.
@@ -49,7 +49,7 @@ An example command would be:
 Most small to medium sized images will take a couple seconds (or less), but larger images (3000 x 4000 pixels) can take around 50 seconds to process.
 
 ## Dockerization <a name="docker"></a>
-My `DockerFile` is included in the `RotationService` folder. 
+The `DockerFile` is included in the `RotationService` folder. 
 
 To see the process in action, run 
 
